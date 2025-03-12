@@ -1,60 +1,67 @@
+// Interface Observer
 package classes;
+public interface IObserver {
+    void update(boolean estado);
+}
 
+// Interface State
+package classes;
+public interface EstadoSemestre {
+    void adicionarObservador(Semestre semestre, IObserver observer);
+}
+
+// Estado Ativo
+package classes;
 import java.util.ArrayList;
 
-import classes.IObserver;
+public class Ativo implements EstadoSemestre {
+    @Override
+    public void adicionarObservador(Semestre semestre, IObserver observer) {
+        semestre.getObservadores().add(observer);
+    }
+}
+
+// Estado Inativo
+package classes;
+public class Inativo implements EstadoSemestre {
+    @Override
+    public void adicionarObservador(Semestre semestre, IObserver observer) {
+        System.out.println("Erro: Não é possível adicionar observadores em um semestre inativo.");
+    }
+}
+
+// Classe Semestre
+package classes;
+import java.util.ArrayList;
 
 public class Semestre {
-        private String nome;
-        private boolean ativo;
-        private ArrayList<IObserver> observadores;
-    
-        // Construtor
-        public Semestre(String nome, boolean ativo) {
-            this.nome = nome;
-            this.ativo = ativo;
-        }
-    
-        // Getter e Setter para nome
-        public String getNome() {
-            return nome;
-        }
-    
-        
-        public void setNome(String nome) {
-            this.nome = nome;
-        }
-    
-        // Getter e Setter para ativa
-        public boolean isAtivo() {
-            return ativo;
-        }
-    
-        
-        public void setAtivo(boolean ativo) {
-            this.ativo = ativo;
-            notifyObservers();
-        }
-    
-        
-        public String toString() {
-            return "Semestre{" +
-                    "nome='" + nome + '\'' +
-                    ", ativo=" + ativo +
-                    '}';
-        }
-        public void addObservadores(IObserver observer){
-            observadores.add(observer);
-        }
+    private String nome;
+    private EstadoSemestre estado;
+    private ArrayList<IObserver> observadores;
 
-        public void removeObservadores(IObserver observer){
-            observadores.remove(observer);
-        }
+    public Semestre(String nome, boolean ativo) {
+        this.nome = nome;
+        this.observadores = new ArrayList<>();
+        this.estado = ativo ? new Ativo() : new Inativo();
+    }
 
-        public void notifyObservers(){
-            for(int i = 0 ; i < observadores.size(); i++){
-                observadores.get(i).update(ativo);
-            }
-        }
-        
-    }  
+    public void setEstado(EstadoSemestre estado) {
+        this.estado = estado;
+    }
+
+    public void ativar() {
+        setEstado(new Ativo());
+    }
+
+    public void desativar() {
+        setEstado(new Inativo());
+    }
+
+    public void adicionarObservador(IObserver observer) {
+        estado.adicionarObservador(this, observer);
+    }
+
+    public ArrayList<IObserver> getObservadores() {
+        return observadores;
+    }
+}
