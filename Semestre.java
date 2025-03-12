@@ -1,27 +1,25 @@
-// Interface Observer
+// IObserver.java
 package classes;
 public interface IObserver {
     void update(boolean estado);
 }
 
-// Interface State
+// EstadoSemestre.java
 package classes;
 public interface EstadoSemestre {
     void adicionarObservador(Semestre semestre, IObserver observer);
 }
 
-// Estado Ativo
+// Ativo.java
 package classes;
-import java.util.ArrayList;
-
 public class Ativo implements EstadoSemestre {
     @Override
     public void adicionarObservador(Semestre semestre, IObserver observer) {
-        semestre.getObservadores().add(observer);
+        semestre.adicionarObservadorPrivado(observer);
     }
 }
 
-// Estado Inativo
+// Inativo.java
 package classes;
 public class Inativo implements EstadoSemestre {
     @Override
@@ -30,7 +28,7 @@ public class Inativo implements EstadoSemestre {
     }
 }
 
-// Classe Semestre
+// Semestre.java
 package classes;
 import java.util.ArrayList;
 
@@ -59,6 +57,10 @@ public class Semestre {
 
     public void adicionarObservador(IObserver observer) {
         estado.adicionarObservador(this, observer);
+    }
+    
+    void adicionarObservadorPrivado(IObserver observer) {
+        observadores.add(observer);
     }
 
     public ArrayList<IObserver> getObservadores() {
